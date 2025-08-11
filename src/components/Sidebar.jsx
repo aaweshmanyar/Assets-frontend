@@ -9,11 +9,9 @@ export default function Sidebar() {
     { title: "List of Assets", icon: <FiList />, link: "/" },
     { title: "Add Assets", icon: <FiInfo />, link: "/add-assets" }, // updated route
     { title: "Assets List", icon: <FiInfo />, link: "/assets" }, // updated route
-    { title: "Assets Detail", icon: <FiInfo />, link: "/assets/:id" }, // updated route
-    { title: "Assets Edit", icon: <FiInfo />, link: "/assets/:id/edit" }, // updated route
     { title: "QR Code Generated", icon: <FiGrid />, link: "/assets-qr" },
     { title: "User Information", icon: <FiUser />, link: "/user-info" },
-    { title: "Assets Information", icon: <FiInfo />, link: "/assets-info" },
+ 
   ];
 
   return (

@@ -1,41 +1,112 @@
-import React, { useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
 
 export default function EditAsset() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  // Prefilled asset data (simulated, should come from DB/API)
   const [formData, setFormData] = useState({
-    assetName: "Dell Laptop",
-    assetType: "Hardware",
-    serialNumber: "DL-12345",
-    purchaseDate: "2023-04-10",
-    purchaseCost: "1200",
-    vendor: "Dell Inc",
-    department: "IT",
-    assignedTo: "John Doe",
-    status: "Active",
-    warrantyExpiry: "2025-04-10",
-    description: "High performance laptop.",
+    assetName: "",
+    assetType: "",
+    serialNumber: "",
+    purchaseDate: "",
+    purchaseCost: "",
+    vendor: "",
+    department: "",
+    assignedTo: "",
+    mobileNumber: "",
+    status: "",
+    warrantyExpiry: "",
+    description: "",
     image: null,
   });
+
+  const [loading, setLoading] = useState(true);
+
+  // Fetch asset data on component mount
+  useEffect(() => {
+    const fetchAsset = async () => {
+      try {
+        const res = await fetch(`http://localhost:5000/api/assets/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data) {
+            const asset = data.data;
+            setFormData({
+              assetName: asset.asset_name || "",
+              assetType: asset.asset_type || "",
+              serialNumber: asset.serial_number || "",
+              purchaseDate: asset.purchase_date
+                ? asset.purchase_date.split("T")[0]
+                : "",
+              purchaseCost: asset.purchase_cost || "",
+              vendor: asset.vendor || "",
+              department: asset.department || "",
+              assignedTo: asset.assigned_to_name || "",
+              mobileNumber: asset.mobile_number || "",
+              status: asset.status || "",
+              warrantyExpiry: asset.warranty_expiry
+                ? asset.warranty_expiry.split("T")[0]
+                : "",
+              description: asset.description || "",
+              image: null,
+            });
+
+          }
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching asset:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAsset();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
-      setFormData({ ...formData, [name]: files[0] }); // file input handling
+      setFormData({ ...formData, [name]: files[0] });
     } else {
       setFormData({ ...formData, [name]: value });
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // send updated formData to backend API here
-    console.log("Updated Asset Data:", formData);
-    alert("Asset updated successfully!");
+
+    const formPayload = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formPayload.append(key, formData[key]);
+    });
+
+    try {
+      const res = await fetch(`http://localhost:5000/api/assets/${id}`, {
+        method: "PUT",
+        body: formPayload,
+      });
+
+      if (res.ok) {
+        alert("Asset updated successfully!");
+        navigate("/assets");
+      } else {
+        alert("Failed to update asset!");
+      }
+    } catch (error) {
+      console.error("Error updating asset:", error);
+      alert("Network error!");
+    }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="text-center p-6">Loading asset data...</div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -173,6 +244,22 @@ export default function EditAsset() {
             />
           </div>
 
+          {/* Mobile Number */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              User Mobile Number
+            </label>
+            <input
+              type="text"
+              name="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              placeholder="Enter mobile number"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+              required
+            />
+          </div>
+
           {/* Status & Warranty */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -243,7 +330,7 @@ export default function EditAsset() {
           <div className="text-right">
             <button
               type="submit"
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-lg shadow hover:shadow-lg transition duration-300"
+              className="cursor-pointer bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-lg shadow hover:shadow-lg transition duration-300"
             >
               Update Asset
             </button>

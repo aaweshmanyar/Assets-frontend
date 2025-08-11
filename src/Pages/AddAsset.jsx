@@ -10,14 +10,15 @@ export default function AddAsset() {
     purchaseCost: "",
     vendor: "",
     department: "",
-    assignedTo: "",
-    mobileNumber: "",      // <-- Added mobile number field
+    assignedTo: "", // Employee Name Only
+    mobileNumber: "",
     status: "",
     warrantyExpiry: "",
     description: "",
     image: null,
   });
 
+  // Handle field/file changes
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     if (files) {
@@ -27,46 +28,25 @@ export default function AddAsset() {
     }
   };
 
-  // Send notification via your backend
-  const sendPushNotification = async () => {
-    try {
-      // If you ever want to add SMS support, pass mobileNumber in this payload and handle it on backend
-      const res = await fetch('http://localhost:5000/api/notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: 'Asset Created ✅',
-          message: `Dear User, thanks for creating the asset "${formData.assetName}" on our platform!`,
-          mobileNumber: formData.mobileNumber     // Optional: send to backend for SMS
-        }),
-      });
-      const data = await res.json();
-      console.log("Notification sent:", data);
-    } catch (error) {
-      console.error("Error sending notification:", error);
-    }
-  };
-
-  // Submit form and create asset + send notification
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare data for backend (Remove image/file in this demo)
-    const payload = { ...formData };
-    delete payload.image; // Not handling file upload in this demo
+    const formPayload = new FormData();
+    Object.keys(formData).forEach((key) => {
+      formPayload.append(key, formData[key]);
+    });
 
     try {
-      const assetRes = await fetch('http://localhost:5000/api/assets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const res = await fetch("http://localhost:5000/api/assets", {
+        method: "POST",
+        body: formPayload, // Multer in backend will parse this
       });
 
-      if (assetRes.ok) {
+      if (res.ok) {
         alert("Asset added successfully!");
 
-        await sendPushNotification();
-
+        // Reset form fields
         setFormData({
           assetName: "",
           assetType: "",
@@ -86,10 +66,10 @@ export default function AddAsset() {
         alert("Failed to add asset!");
       }
     } catch (error) {
+      console.error("Error adding asset:", error);
       alert("Network error!");
     }
   };
-
 
   return (
     <Layout>
@@ -217,7 +197,7 @@ export default function AddAsset() {
           {/* Assigned To */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
-              Assigned To (Employee)
+              Assigned To (Employee Name)
             </label>
             <input
               type="text"
@@ -226,6 +206,22 @@ export default function AddAsset() {
               onChange={handleChange}
               placeholder="Enter employee name"
               className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+            />
+          </div>
+
+          {/* Mobile Number */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              User Mobile Number
+            </label>
+            <input
+              type="text"
+              name="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              placeholder="Enter mobile number"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
+              required
             />
           </div>
 
@@ -288,21 +284,6 @@ export default function AddAsset() {
               onChange={handleChange}
               accept="image/*"
               className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
-            />
-          </div>
-
-
-          {/* Mobile Number */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">User Mobile Number</label>
-            <input
-              type="text"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-              placeholder="Enter mobile number"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none"
-              required
             />
           </div>
 

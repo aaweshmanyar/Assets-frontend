@@ -6,7 +6,9 @@ import AssetList from "./pages/AssetList";
 import AssetDetail from "./pages/AssetDetail";
 import EditAsset from "./pages/EditAsset";
 import AssetQRCode from "./pages/AssetQRCode";
-import OneSignalInit from './pages/OneSignalInit'; // make sure this file uses lowercase 'pages' folder if that's correct
+import OneSignalInit from './pages/OneSignalInit';
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
           <Route path="/assets/:id" element={<AssetDetail />} />
           <Route path="/assets/:id/edit" element={<EditAsset />} />
           <Route path="/assets-qr" element={<AssetQRCode />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </Router>
     </>
