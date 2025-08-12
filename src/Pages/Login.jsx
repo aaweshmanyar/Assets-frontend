@@ -11,32 +11,31 @@ export default function Login() {
     setError("");
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form)
-      });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form)
+    });
 
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error || "Login failed");
-        return;
-      }
-
-      // Store JWT token in localStorage
-      localStorage.setItem("token", data.token);
-
-      // Store login time for inactivity timer
-      localStorage.setItem("lastActivity", Date.now());
-
-      navigate("/"); // Go to dashboard/home
-    } catch (err) {
-      setError("Network error, please try again.");
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error || "Login failed");
+      return;
     }
-  };
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user)); // ✅ store user details
+    localStorage.setItem("lastActivity", Date.now());
+
+    navigate("/"); 
+  } catch (err) {
+    setError("Network error, please try again.");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 px-4">
@@ -64,7 +63,7 @@ export default function Login() {
           />
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+            className="cursor-pointer w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
           >
             Login
           </button>

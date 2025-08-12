@@ -6,11 +6,11 @@ export default function Sidebar() {
   const [open, setOpen] = useState(true);
 
   const menuItems = [
-    { title: "List of Assets", icon: <FiList />, link: "/" },
+    { title: "Dashboard", icon: <FiList />, link: "/" },
     { title: "Add Assets", icon: <FiInfo />, link: "/add-assets" }, // updated route
-    { title: "Assets List", icon: <FiInfo />, link: "/assets" }, // updated route
+    { title: "List of Assets", icon: <FiInfo />, link: "/assets" }, // updated route
     { title: "QR Code Generated", icon: <FiGrid />, link: "/assets-qr" },
-    { title: "User Information", icon: <FiUser />, link: "/user-info" },
+    { title: "User Information", icon: <FiUser />, link: "/user" },
  
   ];
 

@@ -9,6 +9,7 @@ import AssetQRCode from "./pages/AssetQRCode";
 import OneSignalInit from './pages/OneSignalInit';
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import UserInfoCard from "./Pages/UserInfoCard";
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/assets-qr" element={<AssetQRCode />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+           <Route path="/user" element={<UserInfoCard />} />
         </Routes>
       </Router>
     </>

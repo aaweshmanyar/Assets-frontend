@@ -71,14 +71,14 @@ export default function Signup() {
           />
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+            className="cursor-pointer w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
           >
             Sign Up
           </button>
         </form>
         <p className="text-sm text-center text-gray-500 mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-green-600 hover:underline">
+          <Link to="/login" className="cursor-pointer text-green-600 hover:underline">
             Login
           </Link>
         </p>
