@@ -28,7 +28,7 @@ export default function EditAsset() {
   useEffect(() => {
     const fetchAsset = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/assets/${id}`);
+        const res = await fetch(`https://assetsbackend-0ou8.onrender.com/api/assets/${id}`);
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.data) {
@@ -83,7 +83,7 @@ export default function EditAsset() {
     });
 
     try {
-      const res = await fetch(`http://localhost:5000/api/assets/${id}`, {
+      const res = await fetch(`https://assetsbackend-0ou8.onrender.com/api/assets/${id}`, {
         method: "PUT",
         body: formPayload,
       });

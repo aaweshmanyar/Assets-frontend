@@ -11,7 +11,7 @@ export default function AssetDetail() {
   useEffect(() => {
     const fetchAsset = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/assets/${id}`);
+        const res = await fetch(`https://assetsbackend-0ou8.onrender.com/api/assets/${id}`);
         const data = await res.json();
 
         if (res.ok && data.success && data.data) {

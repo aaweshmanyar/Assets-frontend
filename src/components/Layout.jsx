@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 import useAutoLogout from "../hooks/useAutoLogout"; // ✅ import the hook
 
 export default function Layout({ children }) {
-  // Runs inactivity tracking with 30 sec timeout
+  // Runs inactivity tracking with 3 min timeout
   useAutoLogout(180000);
 
   return (

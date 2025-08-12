@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import QRCode from "qrcode";
+import Marquee from "react-fast-marquee";
 
 export default function AssetQRCode() {
   const [assets, setAssets] = useState([]);
@@ -12,7 +13,7 @@ export default function AssetQRCode() {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/assets");
+        const res = await fetch("https://assetsbackend-0ou8.onrender.com/api/assets");
         const data = await res.json();
 
         if (data.success) {
@@ -61,15 +62,18 @@ export default function AssetQRCode() {
       downloadLink.remove();
 
       // Update backend Qrcode flag
-      const updateRes = await fetch(`http://localhost:5000/api/assets/${asset.id}/generate-qrcode`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const updateRes = await fetch(
+        `https://assetsbackend-0ou8.onrender.com/api/assets/${asset.id}/generate-qrcode`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       if (!updateRes.ok) throw new Error("Failed to update QR code flag");
 
       // Log QR code generation
-      const logRes = await fetch("http://localhost:5000/api/qrcodes/log", {
+      const logRes = await fetch("https://assetsbackend-0ou8.onrender.com/api/qrcodes/log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ assetId: asset.id, assetName: asset.asset_name }),
@@ -79,9 +83,7 @@ export default function AssetQRCode() {
 
       // Update local state to reflect QR generated
       setAssets((prevAssets) =>
-        prevAssets.map((a) =>
-          a.id === asset.id ? { ...a, Qrcode: 1 } : a
-        )
+        prevAssets.map((a) => (a.id === asset.id ? { ...a, Qrcode: 1 } : a))
       );
 
       alert(`QR code generated and downloaded for asset: ${asset.asset_name}`);
@@ -104,9 +106,16 @@ export default function AssetQRCode() {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-indigo-600 mb-6 border-b pb-3">
+        <h2 className="text-2xl font-bold text-indigo-600 mb-2 border-b pb-3">
           📦 Asset List with QR Codes
         </h2>
+
+        {/* Informational message */}
+        <Marquee>
+        <p className="mb-4 text-center text-sm text-gray-700 italic">
+          For privacy reasons, you can generate a QR code only once per asset, multiple generations are not allowed.
+        </p>
+        </Marquee>
 
         {assets.length === 0 ? (
           <p className="text-center py-4 text-gray-500">No assets found.</p>
@@ -120,20 +129,15 @@ export default function AssetQRCode() {
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Assigned To</th>
-                  <th className="px-4 py-3">QR Code</th>
+                  <th className="px-4 py-3 text-center">QR Code</th>
                   <th className="px-4 py-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {assets.map((asset) => (
-                  <tr
-                    key={asset.id}
-                    className="border-b hover:bg-gray-50 transition"
-                  >
+                  <tr key={asset.id} className="border-b hover:bg-gray-50 transition">
                     <td className="px-4 py-3">{asset.id}</td>
-                    <td className="px-4 py-3 font-medium">
-                      {asset.asset_name}
-                    </td>
+                    <td className="px-4 py-3 font-medium">{asset.asset_name}</td>
                     <td className="px-4 py-3">{asset.asset_type}</td>
                     <td className="px-4 py-3">
                       <span
@@ -151,13 +155,9 @@ export default function AssetQRCode() {
                     <td className="px-4 py-3">{asset.assigned_to_name || "-"}</td>
                     <td className="px-4 py-3 text-center">
                       {Number(asset.Qrcode) === 1 ? (
-                        <span className="text-green-600 font-semibold">
-                          Generated
-                        </span>
+                        <span className="text-green-600 font-semibold">Generated</span>
                       ) : (
-                        <span className="text-red-600 font-semibold">
-                          Not Generated
-                        </span>
+                        <span className="text-red-600 font-semibold">Not Generated</span>
                       )}
                     </td>
                     <td className="px-4 py-3 flex gap-3 justify-center">

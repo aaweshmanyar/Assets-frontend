@@ -38,7 +38,7 @@ export default function AddAsset() {
     });
 
     try {
-      const res = await fetch("http://localhost:5000/api/assets", {
+      const res = await fetch("https://assetsbackend-0ou8.onrender.com/api/assets", {
         method: "POST",
         body: formPayload, // Multer in backend will parse this
       });

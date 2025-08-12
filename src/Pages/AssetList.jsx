@@ -1,44 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
+import { FiSearch } from "react-icons/fi";
 
 export default function AssetList() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
 
-  // Fetch assets from backend
-  useEffect(() => {
-    const fetchAssets = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/assets");
-        const data = await res.json();
+  const fetchAssets = async (query = "") => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `https://assetsbackend-0ou8.onrender.com/api/assets/search?search=${query}&limit=50&offset=0`
+      );
+      const data = await res.json();
 
-        if (data.success) {
-          // If your API returns { success: true, data: [...] }
-          setAssets(data.data);
-        } else if (Array.isArray(data)) {
-          // If your API returns just an array (e.g. from procedure without wrapper)
-          setAssets(data[0] || []);
-        } else {
-          console.error("Unexpected API response:", data);
-        }
-      } catch (error) {
-        console.error("Error fetching assets:", error);
-      } finally {
-        setLoading(false);
+      if (data.success) {
+        setAssets(data.data);
+      } else {
+        setAssets([]);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching assets:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchAssets();
   }, []);
 
-  if (loading) {
-    return (
-      <Layout>
-        <div className="text-center py-8 text-gray-500">Loading assets...</div>
-      </Layout>
-    );
-  }
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    fetchAssets(e.target.value);
+  };
 
   return (
     <Layout>
@@ -47,7 +44,21 @@ export default function AssetList() {
           📦 Asset List
         </h2>
 
-        {assets.length === 0 ? (
+        {/* Search Bar */}
+        <div className="relative mb-4">
+          <FiSearch className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search assets..."
+            value={search}
+            onChange={handleSearchChange}
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
+          />
+        </div>
+
+        {loading ? (
+          <div className="text-center py-8 text-gray-500">Loading assets...</div>
+        ) : assets.length === 0 ? (
           <p className="text-center py-4 text-gray-500">No assets found.</p>
         ) : (
           <div className="overflow-x-auto">
@@ -64,14 +75,9 @@ export default function AssetList() {
               </thead>
               <tbody>
                 {assets.map((asset) => (
-                  <tr
-                    key={asset.id}
-                    className="border-b hover:bg-gray-50 transition"
-                  >
+                  <tr key={asset.id} className="border-b hover:bg-gray-50 transition">
                     <td className="px-4 py-3">{asset.id}</td>
-                    <td className="px-4 py-3 font-medium">
-                      {asset.asset_name}
-                    </td>
+                    <td className="px-4 py-3 font-medium">{asset.asset_name}</td>
                     <td className="px-4 py-3">{asset.asset_type}</td>
                     <td className="px-4 py-3">
                       <span
@@ -86,11 +92,8 @@ export default function AssetList() {
                         {asset.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
-                      {asset.assigned_to_name || "-"}
-                    </td>
+                    <td className="px-4 py-3">{asset.assigned_to_name || "-"}</td>
                     <td className="px-4 py-3 flex gap-3 justify-center">
-                      {/* View button */}
                       <Link
                         to={`/assets/${asset.id}`}
                         className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-600 transition"
@@ -98,7 +101,6 @@ export default function AssetList() {
                         View
                       </Link>
 
-                      {/* Edit button with id */}
                       <Link
                         to={`/assets/${asset.id}/edit`}
                         className="bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-yellow-600 transition"
