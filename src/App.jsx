@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./P/Dashboard";
+import Dashboard from "./Pages/Dashboard";
 import AddAsset from "./Pages/AddAsset";
 import AssetList from "./Pages/AssetList";
 import AssetDetail from "./Pages/AssetDetail";
