@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import AddAsset from "./pages/AddAsset";
-import AssetList from "./pages/AssetList";
-import AssetDetail from "./pages/AssetDetail";
-import EditAsset from "./pages/EditAsset";
-import AssetQRCode from "./pages/AssetQRCode";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
+import Dashboard from "./P/Dashboard";
+import AddAsset from "./Pages/AddAsset";
+import AssetList from "./Pages/AssetList";
+import AssetDetail from "./Pages/AssetDetail";
+import EditAsset from "./Pages/EditAsset";
+import AssetQRCode from "./Pages/AssetQRCode";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
 import UserInfoCard from "./Pages/UserInfoCard";
 import PrivateRoute from "./components/PrivateRoute"; // Adjust path if needed
 
